@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
 import functools
 import re
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from . import rules_inline
 from .ruler import Ruler
@@ -50,10 +49,10 @@ _DEFAULT_TERMINATORS: frozenset[str] = frozenset(
 )
 
 
-# Lazily compiled regex for the default terminator set.  The @cache ensures it is
-# compiled at most once (on first ParserInline instantiation) and shared across all
-# instances that have not added extra chars, keeping __init__ cost near zero.
-@functools.cache
+# Lazily compiled regex for the default terminator set.  The @lru_cache ensures it
+# is compiled at most once (on first ParserInline instantiation) and shared across
+# all instances that have not added extra chars, keeping __init__ cost near zero.
+@functools.lru_cache(maxsize=None)
 def _default_terminator_re() -> re.Pattern[str]:
     return re.compile("[" + re.escape("".join(_DEFAULT_TERMINATORS)) + "]")
 

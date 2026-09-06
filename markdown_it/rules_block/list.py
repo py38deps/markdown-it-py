@@ -1,4 +1,6 @@
 # Lists
+from __future__ import annotations
+
 import logging
 
 from ..common.utils import isStrSpace

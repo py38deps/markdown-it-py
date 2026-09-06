@@ -23,6 +23,8 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Generic, TypedDict, TypeVar
 import warnings
 
+from markdown_it._compat import DATACLASS_KWARGS
+
 from .utils import EnvType
 
 if TYPE_CHECKING:
@@ -64,7 +66,7 @@ RuleFuncTv = TypeVar("RuleFuncTv")
 """A rule function, whose signature is dependent on the state type."""
 
 
-@dataclass(slots=True)
+@dataclass(**DATACLASS_KWARGS)
 class Rule(Generic[RuleFuncTv]):
     name: str
     enabled: bool

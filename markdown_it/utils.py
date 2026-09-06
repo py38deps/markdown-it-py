@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable, MutableMapping
+from collections.abc import Callable, Iterable
 from collections.abc import MutableMapping as MutableMappingABC
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, TypedDict, cast
+from typing import TYPE_CHECKING, Any, MutableMapping, TypedDict, cast
 
 if TYPE_CHECKING:
     from typing_extensions import NotRequired

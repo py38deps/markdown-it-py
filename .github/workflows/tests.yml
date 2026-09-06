@@ -9,8 +9,7 @@ on:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+*"
   pull_request:
-  schedule:
-    - cron: '0 0 * * 0'  # every week
+  workflow_dispatch:
 
 jobs:
 
@@ -32,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['pypy-3.10', '3.10', '3.11', '3.12', '3.13']
+        python-version: ['pypy-3.10', '3.8', '3.9', '3.10', '3.11', '3.12', '3.13']
 
     steps:
     - uses: actions/checkout@v4
@@ -108,6 +107,31 @@ jobs:
       with:
         name: bench-core
         path: bench-core.json
+        if-no-files-found: error
+
+  build:
+
+    name: Build sdist and wheel
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    - name: Install build
+      run: |
+        python -m pip install --upgrade pip
+        pip install build
+    - name: Build dist
+      run: |
+        python -m build
+    - name: Upload dist
+      uses: actions/upload-artifact@v4
+      with:
+        name: dist
+        path: dist/
         if-no-files-found: error
 
   publish:

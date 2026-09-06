@@ -1,5 +1,7 @@
 """Parse link title"""
 
+from __future__ import annotations
+
 from ..common.utils import charCodeAt, unescapeAll
 
 
