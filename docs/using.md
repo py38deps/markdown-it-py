@@ -52,7 +52,7 @@ dictating the syntax rules and additional options for the parser and renderer.
 You can define this configuration *via* directly supplying a dictionary or a preset name:
 
 - `zero`: This configures the minimum components to parse text (i.e. just paragraphs and text)
-- `commonmark` (default): This configures the parser to strictly comply with the [CommonMark specification](http://spec.commonmark.org/).
+- `commonmark` (default): This configures the parser to strictly comply with the [CommonMark specification](https://spec.commonmark.org/).
 - `js-default`: This is the default in the JavaScript version.
   Compared to `commonmark`, it disables HTML parsing and enables the table and strikethrough components.
 - `gfm-like`: This configures the parser to approximately comply with the [GitHub Flavored Markdown specification](https://github.github.com/gfm/).
@@ -286,6 +286,15 @@ print(node[0])
 node[0].next_sibling
 ```
 
+Use `node.to_tokens()` to recover the linear token stream after modifying the
+tree's `children`, including those of inline and image nodes. The tree's
+`children` are the source of truth: changes made directly to a token's
+`children` list do not appear in the output. Unchanged tokens are reused, and a
+token whose children were edited is returned as a copy, so `to_tokens()` does
+not modify the token stream the tree was built from. Nodes do share their
+`Token` objects with that stream, though, so setting a field such as
+`node.token.content` changes both.
+
 ## Renderers
 
 +++
@@ -298,7 +307,7 @@ with the same signature:
 
 ```python
 def function(renderer, tokens, idx, options, env):
-  return htmlResult
+    return htmlResult
 ```
 
 +++
@@ -332,6 +341,12 @@ class MyRenderer(RendererHTML):
 md = MarkdownIt("commonmark", renderer_cls=MyRenderer)
 md.render("*a*")
 ```
+
+`MarkdownIt` creates the renderer by calling `renderer_cls(self)`, passing the parser instance as a positional argument.
+This differs from JavaScript, where the renderer is constructed with no arguments.
+If you override `__init__` in a custom renderer, it must accept this parser argument; when subclassing `RendererHTML`, call `super().__init__(parser)` to initialise the render rules.
+`RendererHTML` itself accepts an optional `parser=None` argument and does not use or store it, so `RendererHTML()` is also valid when rendering tokens directly.
+The example above inherits this constructor unchanged.
 
 Plugins can support multiple render types, using the `__output__` attribute (this is currently a Python only feature).
 
@@ -401,9 +416,11 @@ md.add_render_rule("link_open", render_blank_link)
 print(md.render("[a]\n\n[a]: b"))
 ```
 
+(md/markdown-renderer)=
+
 ### Markdown renderer
 
-You can also render a token stream directly to markdown via the `MDRenderer` class from [`mdformat`](https://github.com/executablebooks/mdformat):
+You can also render a token stream directly to markdown via the `MDRenderer` class from [`mdformat`](https://github.com/hukkin/mdformat):
 
 ```python
 from markdown_it import MarkdownIt
@@ -426,3 +443,5 @@ env = {}
 
 output_markdown = renderer.render(tokens, options, env)
 ```
+
+For other third-party renderers, and how to write your own, see [](md/third-party).

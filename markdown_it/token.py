@@ -22,6 +22,8 @@ def convert_attrs(value: Any) -> Any:
 
 @dc.dataclass(**DATACLASS_KWARGS)
 class Token:
+    """A single token in the stream produced by the parser."""
+
     type: str
     """Type of the token (string, e.g. "paragraph_open")"""
 
@@ -97,11 +99,11 @@ class Token:
         name, value = attrData
         self.attrSet(name, value)
 
-    def attrSet(self, name: str, value: str | int | float) -> None:
+    def attrSet(self, name: str, value: str | float) -> None:
         """Set `name` attribute to `value`. Override old value if exists."""
         self.attrs[name] = value
 
-    def attrGet(self, name: str) -> None | str | int | float:
+    def attrGet(self, name: str) -> str | int | float | None:
         """Get the value of attribute `name`, or null if it does not exist."""
         return self.attrs.get(name, None)
 
