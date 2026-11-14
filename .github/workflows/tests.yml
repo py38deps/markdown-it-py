@@ -30,7 +30,10 @@ jobs:
 
   tests:
 
-    runs-on: ubuntu-latest
+    # ubuntu-latest is Ubuntu 26.04, and actions/python-versions publishes no 3.8
+    # (last: 24.04) or 3.9 (last: 24.04) builds for it, so setup-python cannot
+    # install them there. 24.04 has builds for every version in the matrix.
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
